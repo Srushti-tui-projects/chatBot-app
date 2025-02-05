@@ -28,7 +28,7 @@ ChartJS.register(
 
 // Type definitions
 type PreferenceCategory = 'Formality' | 'Accuracy' | 'Speed' | 'Humour' | 'Memory';
-type PreferenceValue = 1 | 2 | 3;
+type PreferenceValue = 0 | 1 | 2 | 3;
 
 interface PreferenceChartProps {
   onValueChange?: (category: PreferenceCategory, value: PreferenceValue) => void;
