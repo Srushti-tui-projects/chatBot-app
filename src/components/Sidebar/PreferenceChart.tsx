@@ -8,7 +8,8 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TooltipItem
 } from 'chart.js';
 import dragData from 'chartjs-plugin-dragdata';
 
@@ -87,7 +88,7 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<keyof ChartTypeRegistry>) {
             return `${context.dataset.label}: ${valueLabels[context.raw - 1]}`;
           }
         }
