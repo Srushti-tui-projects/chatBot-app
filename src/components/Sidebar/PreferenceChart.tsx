@@ -88,8 +88,11 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: function(context: TooltipItem<keyof ChartTypeRegistry>) {
-            return `${context.dataset.label}: ${valueLabels[context.raw - 1]}`;
+          label: function(context: TooltipItem<'line'>) {
+            if (typeof context.raw === 'number') {
+              return `${context.dataset.label}: ${valueLabels[context.raw - 1]}`;
+            }
+            return context.dataset.label || '';
           }
         }
       },
