@@ -21,6 +21,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   dragData
+  
 );
 
 type PreferenceCategory = 'Formality' | 'Accuracy' | 'Speed' | 'Humour' | 'Memory';
@@ -97,10 +98,13 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
         magnet: {
           to: Math.round
         },
-        onDragStart: function(e: any) {
-          // Custom logic for drag start if needed
+        onDragStart: function(e: DragEvent) {
+          console.log("on drag start", e);
+          
         },
-        onDrag: function(e: any, datasetIndex: number, index: number, value: number) {
+        onDrag: function(e: DragEvent, datasetIndex: number, index: number, value: number) {
+          console.log("event on drag: ", e);
+          
           const newValue = Math.min(3, Math.max(1, Math.round(value))) as PreferenceValue;
           const newDatasets = [...data.datasets];
           newDatasets[datasetIndex].data[index] = newValue;
@@ -113,7 +117,9 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
             onValueChange(data.labels[index] as PreferenceCategory, newValue);
           }
         },
-        onDragEnd: function(e: any, datasetIndex: number, index: number, value: number) {
+        onDragEnd: function(e: DragEvent, datasetIndex: number, index: number, value: number) {
+          console.log("e:", e);
+          
           const finalValue = Math.min(3, Math.max(1, Math.round(value))) as PreferenceValue;
           const newDatasets = [...data.datasets];
           newDatasets[datasetIndex].data[index] = finalValue;

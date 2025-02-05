@@ -18,7 +18,8 @@ function Header() {
             height={30}
             paddingRight="10px"
             paddingLeft="10px"
-          /> ChatBot
+          /> 
+          ChatBot
 
         </Text>
         <Flex direction="row" margin={0}>
@@ -41,7 +42,7 @@ function Header() {
 export const Layout = ({ children }: React.PropsWithChildren) => {
   return (
     <Authenticator components={{ Header }}>
-      {({ user }) => (
+      {({ }) => (
         <Flex
           direction="column"
           width="100vw"

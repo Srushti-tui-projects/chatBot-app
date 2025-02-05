@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { ColorMode, Divider } from "@aws-amplify/ui-react";
+import { ColorMode  } from "@aws-amplify/ui-react";
 import { ThemeStyle } from "@aws-amplify/ui-react/server";
 import { ConfigureAmplify } from "./ConfigureAmplify";
 import { theme } from "@/theme";

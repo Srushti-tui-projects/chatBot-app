@@ -1,4 +1,4 @@
-import { View, Button, Flex, Image } from "@aws-amplify/ui-react";
+import { View, Button, Flex } from "@aws-amplify/ui-react";
 
 type HeaderProps = {
   onLogout: () => void;
