@@ -9,10 +9,13 @@ import {
   Title,
   Tooltip,
   Legend,
-  TooltipItem
+  TooltipItem,
+  ChartData,
+  ChartOptions,
+  Plugin
 } from 'chart.js';
-import dragData from 'chartjs-plugin-dragdata';
 
+// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,11 +23,10 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend,
-  dragData
-  
+  Legend
 );
 
+// Type definitions
 type PreferenceCategory = 'Formality' | 'Accuracy' | 'Speed' | 'Humour' | 'Memory';
 type PreferenceValue = 1 | 2 | 3;
 
@@ -32,8 +34,80 @@ interface PreferenceChartProps {
   onValueChange?: (category: PreferenceCategory, value: PreferenceValue) => void;
 }
 
+// Chart type definitions
+type Data = ChartData<'line', number[], string>;
+type Options = ChartOptions<'line'>;
+
 const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
-  const [data, setData] = useState({
+  const valueLabels = ['None', 'Moderate', 'Extreme'];
+
+  // Create custom drag plugin
+  const dragPlugin: Plugin<'line'> = {
+    id: 'dragPlugin',
+    
+    beforeDraw: (chart) => {
+      const canvas = chart.canvas;
+      if (!canvas) return;
+  
+      let isDragging = false;
+      let selectedPoint: { datasetIndex: number; index: number } | null = null;
+  
+      canvas.addEventListener('mousedown', (e) => {
+        const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
+        if (points.length) {
+          isDragging = true;
+          selectedPoint = {
+            datasetIndex: points[0].datasetIndex,
+            index: points[0].index
+          };
+        }
+      });
+  
+      canvas.addEventListener('mousemove', (e) => {
+        if (isDragging && selectedPoint) {
+          const rect = canvas.getBoundingClientRect();
+          const y = e.clientY - rect.top;
+          // const chartArea = chart.chartArea;
+          const scales = chart.scales;
+          const newValue = scales.y.getValueForPixel(y);
+          
+          if (newValue) {
+            const roundedValue = Math.min(3, Math.max(1, Math.round(newValue))) as PreferenceValue;
+            
+            // Update state using setData
+            setData(prevData => {
+              const newDatasets = [...prevData.datasets];
+              newDatasets[selectedPoint!.datasetIndex].data[selectedPoint!.index] = roundedValue;
+              return {
+                ...prevData,
+                datasets: newDatasets
+              };
+            });
+            
+            if (onValueChange && chart.data.labels) {
+              onValueChange(
+                chart.data.labels[selectedPoint.index] as PreferenceCategory,
+                roundedValue
+              );
+            }
+          }
+        }
+      });
+  
+      canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+        selectedPoint = null;
+      });
+  
+      canvas.addEventListener('mouseleave', () => {
+        isDragging = false;
+        selectedPoint = null;
+      });
+    }
+  };
+  
+
+  const [data, setData] = useState<Data>({
     labels: ['Formality', 'Accuracy', 'Speed', 'Humour', 'Memory'],
     datasets: [
       {
@@ -52,9 +126,7 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
     ],
   });
 
-  const valueLabels = ['None', 'Moderate', 'Extreme'];
-
-  const options = {
+  const options: Options = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -62,11 +134,11 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
     },
     interaction: {
       intersect: false,
-      mode: 'nearest' as const
+      mode: 'nearest'
     },
     scales: {
       x: {
-        type: 'category' as const,
+        type: 'category',
         display: true
       },
       y: {
@@ -74,8 +146,12 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
         max: 3,
         ticks: {
           stepSize: 1,
-          callback: function(value: number) {
-            return valueLabels[value - 1];
+          callback: function(tickValue: number | string) {
+            const value = Number(tickValue);
+            if (!isNaN(value)) {
+              return valueLabels[value - 1];
+            }
+            return tickValue;
           }
         }
       }
@@ -83,7 +159,7 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
     plugins: {
       legend: {
         display: true,
-        position: 'top' as const
+        position: 'top'
       },
       tooltip: {
         enabled: true,
@@ -95,50 +171,12 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
             return context.dataset.label || '';
           }
         }
-      },
-      dragData: {
-        round: 1,
-        showTooltip: true,
-        magnet: {
-          to: Math.round
-        },
-        onDragStart: function(e: DragEvent) {
-          console.log("on drag start", e);
-          
-        },
-        onDrag: function(e: DragEvent, datasetIndex: number, index: number, value: number) {
-          console.log("event on drag: ", e);
-          
-          const newValue = Math.min(3, Math.max(1, Math.round(value))) as PreferenceValue;
-          const newDatasets = [...data.datasets];
-          newDatasets[datasetIndex].data[index] = newValue;
-          setData({
-            ...data,
-            datasets: newDatasets
-          });
-          
-          if (onValueChange) {
-            onValueChange(data.labels[index] as PreferenceCategory, newValue);
-          }
-        },
-        onDragEnd: function(e: DragEvent, datasetIndex: number, index: number, value: number) {
-          console.log("e:", e);
-          
-          const finalValue = Math.min(3, Math.max(1, Math.round(value))) as PreferenceValue;
-          const newDatasets = [...data.datasets];
-          newDatasets[datasetIndex].data[index] = finalValue;
-          setData({
-            ...data,
-            datasets: newDatasets
-          });
-          
-          if (onValueChange) {
-            onValueChange(data.labels[index] as PreferenceCategory, finalValue);
-          }
-        }
       }
     }
   };
+
+  // Register the plugin
+  ChartJS.register(dragPlugin);
 
   return (
     <div style={{ height: '200px', width: '100%' }}>
