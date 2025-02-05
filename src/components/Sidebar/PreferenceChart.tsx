@@ -15,6 +15,8 @@ import {
   Plugin
 } from 'chart.js';
 
+import { PreferenceCategory, PreferenceValue } from '@/types/preferences';
+
 // Register ChartJS components
 ChartJS.register(
   CategoryScale,
@@ -26,13 +28,11 @@ ChartJS.register(
   Legend
 );
 
-// Type definitions
-type PreferenceCategory = 'Formality' | 'Accuracy' | 'Speed' | 'Humour' | 'Memory';
-type PreferenceValue = 0 | 1 | 2 | 3;
 
 interface PreferenceChartProps {
   onValueChange?: (category: PreferenceCategory, value: PreferenceValue) => void;
 }
+
 
 // Chart type definitions
 type Data = ChartData<'line', number[], string>;

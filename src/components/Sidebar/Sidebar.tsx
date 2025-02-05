@@ -4,13 +4,15 @@ import { Flex, ScrollView, Divider } from "@aws-amplify/ui-react";
 import { ConversationsContext } from "@/providers/ConversationsProvider";
 import { ConversationItem } from "./ConversationItem";
 import PreferenceChart from './PreferenceChart';
+import { PreferenceCategory, PreferenceValue } from '@/types/preferences';
+
 
 export const Sidebar = ({ children }: React.PropsWithChildren) => {
   const { conversations } = React.useContext(ConversationsContext);
 
   const handlePreferenceChange = (
-    category: 'Formality' | 'Accuracy' | 'Speed' | 'Humour' | 'Memory',
-    value: 0 | 1 | 2
+    category: PreferenceCategory,
+    value: PreferenceValue
   ) => {
     console.log(`${category} changed to ${value}`);
   };
@@ -22,8 +24,7 @@ export const Sidebar = ({ children }: React.PropsWithChildren) => {
           <Flex direction="row" padding="medium">
             <PreferenceChart onValueChange={handlePreferenceChange} />
           </Flex>
-          <Divider
-    orientation="horizontal" />
+          <Divider orientation="horizontal" />
           <Flex direction="column" padding="medium">
             {conversations.map((conversation) => (
               <ConversationItem
