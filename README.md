@@ -8,7 +8,6 @@ This example uses:
 - NextJS App router
 - Amplify UI components
 
-
 ### Prerequisites
 
 - Node.js 18+ installed
