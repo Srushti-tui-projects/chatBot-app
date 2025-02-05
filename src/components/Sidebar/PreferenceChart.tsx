@@ -50,43 +50,40 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
       if (!canvas) return;
   
       let isDragging = false;
-      let selectedPoint: { datasetIndex: number; index: number } | null = null;
+      let selectedPointIndex: number | null = null;
   
       canvas.addEventListener('mousedown', (e) => {
         const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
         if (points.length) {
           isDragging = true;
-          selectedPoint = {
-            datasetIndex: points[0].datasetIndex,
-            index: points[0].index
-          };
+          selectedPointIndex = points[0].index;
         }
       });
   
       canvas.addEventListener('mousemove', (e) => {
-        if (isDragging && selectedPoint) {
+        if (isDragging && selectedPointIndex !== null) {
           const rect = canvas.getBoundingClientRect();
           const y = e.clientY - rect.top;
-          // const chartArea = chart.chartArea;
           const scales = chart.scales;
           const newValue = scales.y.getValueForPixel(y);
           
           if (newValue) {
             const roundedValue = Math.min(3, Math.max(1, Math.round(newValue))) as PreferenceValue;
             
-            // Update state using setData
-            setData(prevData => {
-              const newDatasets = [...prevData.datasets];
-              newDatasets[selectedPoint!.datasetIndex].data[selectedPoint!.index] = roundedValue;
-              return {
-                ...prevData,
-                datasets: newDatasets
-              };
-            });
+            // Update state using setData - simplified for single dataset
+            setData(prevData => ({
+              ...prevData,
+              datasets: [{
+                ...prevData.datasets[0],
+                data: prevData.datasets[0].data.map((value, index) => 
+                  index === selectedPointIndex ? roundedValue : value
+                )
+              }]
+            }));
             
             if (onValueChange && chart.data.labels) {
               onValueChange(
-                chart.data.labels[selectedPoint.index] as PreferenceCategory,
+                chart.data.labels[selectedPointIndex] as PreferenceCategory,
                 roundedValue
               );
             }
@@ -96,15 +93,16 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
   
       canvas.addEventListener('mouseup', () => {
         isDragging = false;
-        selectedPoint = null;
+        selectedPointIndex = null;
       });
   
       canvas.addEventListener('mouseleave', () => {
         isDragging = false;
-        selectedPoint = null;
+        selectedPointIndex = null;
       });
     }
   };
+  
   
 
   const [data, setData] = useState<Data>({
