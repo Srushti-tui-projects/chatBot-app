@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Flex, ScrollView, Divider } from "@aws-amplify/ui-react";
+import { Flex, ScrollView, Divider,View } from "@aws-amplify/ui-react";
 import { ConversationsContext } from "@/providers/ConversationsProvider";
 import { ConversationItem } from "./ConversationItem";
 import PreferenceChart from './PreferenceChart';
@@ -26,12 +26,14 @@ export const Sidebar = ({ children }: React.PropsWithChildren) => {
           </Flex>
           <Divider orientation="horizontal" />
           <Flex direction="column" padding="medium">
+          <View backgroundColor="background.secondary" padding="medium" borderRadius="medium" color="font.primary">
             {conversations.map((conversation) => (
               <ConversationItem
                 key={conversation.id}
                 conversation={conversation}
               />
             ))}
+            </View>
           </Flex>
         </Flex>
       </ScrollView>

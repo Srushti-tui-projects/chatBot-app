@@ -38,7 +38,7 @@ export const Chat = ({ id }: { id: string }) => {
         }}
         isLoading={isLoading}
         messageRenderer={{
-          text: ({ text }) => <ReactMarkdown>{text}</ReactMarkdown>,
+          text: ({ text }) => <View backgroundColor="background.secondary" padding="medium" borderRadius="medium" color="font.primary"><ReactMarkdown>{text}</ReactMarkdown> </View>,
         }}
       />
     </View>

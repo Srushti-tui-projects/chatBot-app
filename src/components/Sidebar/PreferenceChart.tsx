@@ -173,7 +173,6 @@ const PreferenceChart: React.FC<PreferenceChartProps> = ({ onValueChange }) => {
     }
   };
 
-  // Register the plugin
   ChartJS.register(dragPlugin);
 
   return (

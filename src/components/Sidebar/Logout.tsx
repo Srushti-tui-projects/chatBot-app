@@ -10,7 +10,7 @@ export const LogoutButton = () => {
         signOut();
       }}
       size="small"
-
+      color="hsl(220, 100%, 15%)"
       margin={0}
 
     >

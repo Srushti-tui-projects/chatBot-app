@@ -11,7 +11,7 @@ function Header() {
     <View padding="0.75rem" backgroundColor="#7DD6E8">
       <Flex direction="row" justifyContent="space-between" alignItems="center">
 
-        <Text fontSize="1.4rem" fontWeight="bold">
+        <Text fontSize="1.4rem" fontWeight="bold" color="hsl(220, 100%, 15%)">
           <Image
             src="/images/TUI_Logo.png"
             alt="Logo"
@@ -25,7 +25,7 @@ function Header() {
         <Flex direction="row" margin={0}>
 
           {user && (
-            <> <Text>
+            <> <Text color="hsl(220, 100%, 15%)">
               {user?.signInDetails?.loginId}
             </Text>
               <LogoutButton /> </>
