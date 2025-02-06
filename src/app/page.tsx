@@ -29,9 +29,9 @@ export default function Home() {
 
   return (
     <Flex direction="column">
-      <Heading level={1} >Hello 👋</Heading>
+      <Heading level={4} >Hello, what do you want to know ?</Heading>
       <Flex as="form" onSubmit={handleSubmit}>
-        <TextAreaField name="message" autoResize label="message" labelHidden />
+        <TextAreaField name="message" autoResize label="message" labelHidden  width={"60vw"} />
         <Button type="submit">Send</Button>
       </Flex>
     </Flex>
